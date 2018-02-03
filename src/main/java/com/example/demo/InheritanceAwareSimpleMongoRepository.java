@@ -3,7 +3,6 @@ package com.example.demo;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
 import org.bson.Document;
 import org.springframework.data.annotation.TypeAlias;
@@ -12,7 +11,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.repository.query.MongoEntityInformation;
 import org.springframework.data.mongodb.repository.support.SimpleMongoRepository;
-import org.springframework.lang.Nullable;
 
 public class InheritanceAwareSimpleMongoRepository<T, ID extends Serializable> extends SimpleMongoRepository<T, ID> {
 
@@ -46,8 +44,9 @@ public class InheritanceAwareSimpleMongoRepository<T, ID extends Serializable> e
 
     @Override
     public List<T> findAll() {
-        return mongoOperations.find(new Query().addCriteria(classCriteria),
+        return classCriteria != null ? mongoOperations.find(new Query().addCriteria(classCriteria),
                 entityInformation.getJavaType(),
-                entityInformation.getCollectionName());
+                entityInformation.getCollectionName())
+                : super.findAll();
     }
 }
